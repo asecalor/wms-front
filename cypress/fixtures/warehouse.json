@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "address": "1234 Main St",
+    "products": [
+      { "productId": 101, "stock": 20 }
+    ]
+  },
+  {
+    "id": 2,
+    "address": "5678 Market St",
+    "products": [
+      { "productId": 102, "stock": 30 }
+    ]
+  }
+]
