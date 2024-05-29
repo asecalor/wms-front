@@ -1,8 +1,7 @@
 
 import './App.css';
 import Warehouses from "./getWarehouse";
-import {ChangeEventHandler, EventHandler, useState} from "react";
-import WarehouseCard from "./WarehouseCard";
+import {useState} from "react";
 import MoveStock from "./MoveStock";
 
 function App() {
@@ -10,8 +9,8 @@ function App() {
     const [providerId, setProviderId] = useState()
 
   return (
-      <div>
-          <div className="left-side-style">
+      <div className="container-style">
+          <div>
               <input
                   className='input-style'
                   value={providerId}
@@ -23,8 +22,9 @@ function App() {
                       setProviderId(event.target.value)
                   }}
               />
+              <MoveStock providerId={providerId} />
           </div>
-          <MoveStock providerId={providerId} />
+
         <Warehouses providerId={providerId}/>
       </div>
 

@@ -65,7 +65,7 @@ h2{
   margin: 0;
 }
 
-button,input,select{
+input,select{
   padding: 10px;
   width: 200px;
   background-color: transparent;
@@ -75,3 +75,13 @@ button,input,select{
   border-style: solid;
 }
 
+.container-style{
+  display: flex;
+  align-items: start;
+
+}
+
+button{
+  padding: 8px;
+
+}

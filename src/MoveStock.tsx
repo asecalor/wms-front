@@ -8,9 +8,8 @@ const MoveStock: React.FC<{ providerId: number | undefined }> = ({ providerId })
     const [fromWarehouse, setFromWarehouse] = useState<number | undefined>();
     const [toWarehouse, setToWarehouse] = useState<number | undefined>();
     const url: string = `http://localhost:3001/warehouse?providerId=${providerId}`;
-    const availableProducts = warehouses.flatMap(warehouse => warehouse.products).map((product) => (
-            product.productId
-        ))
+    const url2: string = `http://localhost:3001/warehouse/move/${selectedProduct}`
+    const availableProducts = warehouses.flatMap(warehouse => warehouse.products).map((product) => (product.productId))
 
     useEffect(() => {
         if (providerId) {
@@ -24,6 +23,18 @@ const MoveStock: React.FC<{ providerId: number | undefined }> = ({ providerId })
 
     const handleMoveStock = () => {
         if (selectedProduct !== undefined && fromWarehouse !== undefined && toWarehouse !== undefined && quantity > 0) {
+            fetch(url2, {
+                method: "POST",
+                headers:{
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    providerId: Number(providerId),
+                    fromWarehouseId: fromWarehouse,
+                    toWarehouseId: toWarehouse,
+                    quantity: Number(quantity)
+                })
+            })
 
         }
     };
@@ -35,7 +46,7 @@ const MoveStock: React.FC<{ providerId: number | undefined }> = ({ providerId })
 
     const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
         // @ts-ignore
-        setQuantity(Number(e.target.value));
+        setQuantity(e.target.value);
     };
 
     const handleFromWarehouseChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -55,11 +66,11 @@ const MoveStock: React.FC<{ providerId: number | undefined }> = ({ providerId })
                 <label>Producto: </label>
                 <select onChange={handleProductChange}>
                     <option value="">Seleccionar Producto</option>
-                    {[...new Set(availableProducts)].map((product)=>(<option
-                        value={product.productId}
-                        key={product.productId}
+                    {availableProducts.filter((product, index, array)=> array.indexOf(product) === index).map((product)=>(<option
+                        value={product}
+                        key={product}
                     >
-                        {product.productId}
+                        {product}
                     </option>))}
                 </select>
             </div>
