@@ -1,35 +1,17 @@
-import {useEffect, useState} from "react";
-import {Warehouse} from "./util";
+// getWarehouse.js
+import React from 'react';
+import { Warehouse } from "./util";
 import WarehouseCard from "./WarehouseCard";
 
-const Warehouses = ({providerId}:{providerId:number|undefined}) => {
-    const [warehouse, setWarehouse] = useState<Warehouse[]>([]);
-    const url: string =`http://localhost:3001/warehouse?providerId=${providerId}`
+const Warehouses = ({ providerId, warehouses }: { providerId: number | undefined, warehouses: Warehouse[] }) => {
 
-
-    const getWarehouse = () => {
-        if(
-            providerId
-        ) {
-            fetch(url)
-                .then((response) => response.json())
-                .then((response) => setWarehouse(response as Warehouse[]));
-        } else {
-            setWarehouse([])
-        }
-    };
-
-    useEffect(() => {
-        getWarehouse();
-    }, [providerId]);
-
-    return(
+    return (
         <div className="map-style">
-            {warehouse?.map((warehouse) => (
+            {warehouses?.map((warehouse) => (
                 <WarehouseCard key={warehouse.id} warehouse={warehouse} />
             ))}
         </div>
     )
 }
 
-export default Warehouses
+export default Warehouses;

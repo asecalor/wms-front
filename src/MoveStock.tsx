@@ -1,32 +1,20 @@
-import React, { useEffect, useState, ChangeEvent } from 'react';
+// MoveStock.js
+import React, { useState, ChangeEvent } from 'react';
 import { Warehouse } from './util';
 
-const MoveStock: React.FC<{ providerId: number | undefined }> = ({ providerId }) => {
-    const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
+const MoveStock: React.FC<{ providerId: number | undefined, warehouses: Warehouse[], fetchWarehouses: (providerId: number) => void }> = ({ providerId, warehouses, fetchWarehouses }) => {
     const [selectedProduct, setSelectedProduct] = useState<number | undefined>();
     const [quantity, setQuantity] = useState<number>(0);
     const [fromWarehouse, setFromWarehouse] = useState<number | undefined>();
     const [toWarehouse, setToWarehouse] = useState<number | undefined>();
-    const url: string = `http://localhost:3001/warehouse?providerId=${providerId}`;
-    const url2: string = `http://localhost:3001/warehouse/move/${selectedProduct}`
-    const availableProducts = warehouses.flatMap(warehouse => warehouse.products).map((product) => (product.productId))
-
-    useEffect(() => {
-        if (providerId) {
-            fetch(url)
-                .then((response) => response.json())
-                .then((response) => setWarehouses(response as Warehouse[]));
-        } else {
-            setWarehouses([]);
-        }
-    }, [providerId]);
 
     const handleMoveStock = () => {
         if (selectedProduct !== undefined && fromWarehouse !== undefined && toWarehouse !== undefined && quantity > 0) {
-            fetch(url2, {
+            const url = `http://localhost:3001/warehouse/move/${selectedProduct}`;
+            fetch(url, {
                 method: "POST",
-                headers:{
-                  "Content-Type": "application/json"
+                headers: {
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     providerId: Number(providerId),
@@ -34,73 +22,54 @@ const MoveStock: React.FC<{ providerId: number | undefined }> = ({ providerId })
                     toWarehouseId: toWarehouse,
                     quantity: Number(quantity)
                 })
-            })
-
+            }).then(() => {
+                if(providerId){
+                    fetchWarehouses(providerId);  // Refresh warehouses after moving stock
+                }
+            });
+        }
+        else {
+            alert("Por favor, rellena todos los campos. La cantidad debe ser positiva.");
         }
     };
 
-    const handleProductChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        // @ts-ignore
-        setSelectedProduct(Number(e.target.value));
-    };
-
-    const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
-        // @ts-ignore
-        setQuantity(e.target.value);
-    };
-
-    const handleFromWarehouseChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        // @ts-ignore
-        setFromWarehouse(Number(e.target.value));
-    };
-
-    const handleToWarehouseChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        // @ts-ignore
-        setToWarehouse(Number(e.target.value));
-    };
+    const availableProducts = warehouses.flatMap(warehouse => warehouse.products).map((product) => (product.productId));
 
     return (
         <div className="mover-stock-style">
             <h2>Mover Stock</h2>
             <div>
                 <label>Producto: </label>
-                <select onChange={handleProductChange}>
+                <select onChange={(e) => setSelectedProduct(Number(e.target.value))}>
                     <option value="">Seleccionar Producto</option>
-                    {availableProducts.filter((product, index, array)=> array.indexOf(product) === index).map((product)=>(<option
-                        value={product}
-                        key={product}
-                    >
-                        {product}
-                    </option>))}
+                    {availableProducts.filter((product, index, array) => array.indexOf(product) === index).map((product) => (
+                        <option value={product} key={product}>{product}</option>
+                    ))}
                 </select>
             </div>
             <div>
                 <label>Cantidad: </label>
                 <input
-                    type="number"
+                    type="string"
                     value={quantity}
-                    onChange={handleQuantityChange}
+                    onChange={(e) => setQuantity(Number(e.target.value))}
                 />
             </div>
             <div>
                 <label>Desde: </label>
-                <select onChange={handleFromWarehouseChange}>
+                <select onChange={(e) => setFromWarehouse(Number(e.target.value))}>
                     <option value="">Seleccionar Almacén</option>
                     {warehouses.map((warehouse) => (
-                        <option key={warehouse.id} value={warehouse.id}>
-                            {warehouse.id}
-                        </option>
+                        <option key={warehouse.id} value={warehouse.id}>{warehouse.id}</option>
                     ))}
                 </select>
             </div>
             <div>
                 <label>Hasta: </label>
-                <select onChange={handleToWarehouseChange}>
+                <select onChange={(e) => setToWarehouse(Number(e.target.value))}>
                     <option value="">Seleccionar Almacén</option>
                     {warehouses.map((warehouse) => (
-                        <option key={warehouse.id} value={warehouse.id}>
-                            {warehouse.id}
-                        </option>
+                        <option key={warehouse.id} value={warehouse.id}>{warehouse.id}</option>
                     ))}
                 </select>
             </div>
