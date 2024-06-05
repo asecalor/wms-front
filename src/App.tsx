@@ -4,6 +4,8 @@ import Warehouses from "./getWarehouse";
 import {useState, useEffect} from "react";
 import MoveStock from "./MoveStock";
 import { Warehouse } from './util';
+import StockAlertComponent from "./StockAlert";
+import {Toaster} from "react-hot-toast";
 
 function App() {
 
@@ -44,6 +46,8 @@ function App() {
                 <MoveStock providerId={providerId} warehouses={warehouses} fetchWarehouses={fetchWarehouses} />
             </div>
             <Warehouses providerId={providerId} warehouses={warehouses} />
+            <StockAlertComponent/>
+            <Toaster></Toaster>
         </div>
     );
 }
